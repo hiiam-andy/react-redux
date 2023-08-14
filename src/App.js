@@ -1,57 +1,51 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addCustomerAction } from "./store/customerReducer";
-import { removeCustomerAction } from "./store/customerReducer";
-import { fetchCustomers } from "./asyncActions/customers";
+import { addUserAction, removeUserAction } from "./redux/store/userReducer";
+import { fetchUsers } from "./redux/asyncActions/users";
 
-function App() {
+export default function App() {
+  const sum = useSelector((state) => state.sum.sum);
+  const users = useSelector((state) => state.users.users);
   const dispatch = useDispatch();
-  const cash = useSelector((state) => state.cash.cash);
-  const customers = useSelector((state) => state.customers.customers);
 
-  const addCash = (cash) => {
-    dispatch({ type: "ADD_CASH", payload: cash });
+  const addSum = (num) => {
+    dispatch({ type: "ADD_SUM", payload: num });
   };
-  const getCash = (cash) => {
-    dispatch({ type: "GET_CASH", payload: cash });
+  const getSum = (num) => {
+    dispatch({ type: "GET_SUM", payload: num });
   };
-  const addCustomer = (name) => {
-    const customer = {
+  const addUser = (name) => {
+    const user = {
       name,
       id: Date.now(),
     };
-    dispatch(addCustomerAction(customer));
+    dispatch(addUserAction(user));
   };
-  const removeCustomer = (customer) => {
-    dispatch(removeCustomerAction(customer.id));
+
+  const removeUser = (user) => {
+    dispatch(removeUserAction(user.id));
   };
 
   return (
-    <div className={"app"}>
-      <h1>{cash}</h1>
-      <div>
-        <button onClick={() => addCash(Number(prompt()))}>Пополнить</button>
-        <button onClick={() => getCash(Number(prompt()))}>Снять</button>
-        <button onClick={() => addCustomer(prompt())}>Добавить клиента</button>
-        <button onClick={() => dispatch(fetchCustomers())}>
-          Получить из базы
-        </button>
-      </div>
-      {customers.length > 0 ? (
+    <div>
+      <h1>{sum}</h1>
+      <button onClick={() => addSum(1)}>+</button>
+      <button onClick={() => getSum(1)}>-</button>
+      <button onClick={() => addUser(prompt())}>Добавить</button>
+      <button onClick={() => dispatch(fetchUsers())}>
+        Получить пользователей
+      </button>
+      {users.length > 0 ? (
         <ul>
-          {customers.map((customer) => {
-            return (
-              <li onClick={() => removeCustomer(customer)} key={customer.id}>
-                {customer.name}
-              </li>
-            );
-          })}
+          {users.map((user) => (
+            <li onClick={() => removeUser(user)} key={user.id}>
+              {user.name}
+            </li>
+          ))}
         </ul>
       ) : (
-        <div>Никого</div>
+        <h4>Нет пользователей</h4>
       )}
     </div>
   );
 }
-
-export default App;
